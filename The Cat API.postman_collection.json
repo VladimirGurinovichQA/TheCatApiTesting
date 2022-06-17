@@ -1,0 +1,1695 @@
+{
+	"info": {
+		"_postman_id": "51a85e36-c2fb-4147-96c9-9d24030bcecb",
+		"name": "The Cat API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "17233745"
+	},
+	"item": [
+		{
+			"name": "Positive testing",
+			"item": [
+				{
+					"name": "Check  breed_ids, category_ids in body",
+					"item": [
+						{
+							"name": "Check breed_ids=abys and category_ids=5",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}?breed_ids=abys&category_ids=5&limit=2&page=1",
+									"host": [
+										"{{URL}}"
+									],
+									"query": [
+										{
+											"key": "breed_ids",
+											"value": "abys"
+										},
+										{
+											"key": "category_ids",
+											"value": "5"
+										},
+										{
+											"key": "limit",
+											"value": "2"
+										},
+										{
+											"key": "page",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Check breed_ids=beng",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}?breed_ids=beng&limit=3&page=0",
+									"host": [
+										"{{URL}}"
+									],
+									"query": [
+										{
+											"key": "breed_ids",
+											"value": "beng"
+										},
+										{
+											"key": "limit",
+											"value": "3"
+										},
+										{
+											"key": "page",
+											"value": "0"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Check category_ids=15",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}?category_ids=15&limit=2&page=1",
+									"host": [
+										"{{URL}}"
+									],
+									"query": [
+										{
+											"key": "category_ids",
+											"value": "15"
+										},
+										{
+											"key": "limit",
+											"value": "2"
+										},
+										{
+											"key": "page",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"let paramsObj = {",
+									"",
+									"    checkBreed: function() {",
+									"        pm.test(\"API response includes images that match to requested Breed\", function () {",
+									"            response.forEach(function(el) {",
+									"                pm.expect(el.breeds.some((e) => {",
+									"                    return e.id === paramsObj.breed_ids;",
+									"                })).to.eql(true);",
+									"            })",
+									"            pm.expect(response.length > 0).to.be.true;",
+									"        });",
+									"    },",
+									"",
+									"    checkCategory: function() {",
+									"        pm.test(\"API response includes images that match to requested Category\", function () {",
+									"            response.forEach(function(el) {",
+									"                pm.expect(el.categories.some((e) => {",
+									"                    return e.id === Number(paramsObj.category_ids);    ",
+									"                })).to.eql(true);",
+									"            })",
+									"            pm.expect(response.length > 0).to.be.true;",
+									"        });",
+									"    }",
+									"}",
+									"",
+									"let paramsList = pm.request.url.query;",
+									"let response = pm.response.json();",
+									"",
+									"paramsList.reduce(function(target, key) {",
+									"        target[key.key] = key.value;",
+									"        return target;",
+									"}, paramsObj) //initial empty object",
+									"",
+									"paramsObj.breed_ids && paramsObj.checkBreed();",
+									"paramsObj.category_ids && paramsObj.checkCategory();",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Body is not empty\", function () {",
+									"    pm.expect(response !== null).to.eql(true);",
+									"    pm.expect(response.length > 0).to.eql(true);",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Check mime_types in body",
+					"item": [
+						{
+							"name": "Check mime_types=jpg,png",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const types = [\"jpg\", \"png\"];\r",
+											"let response = pm.response.json();\r",
+											"\r",
+											"pm.test(\"API response includes images that match to requested type\", function () {\r",
+											"    response.forEach(function(el) {\r",
+											"        let url = el.url;\r",
+											"        let imageType = url.slice(-3);\r",
+											"        pm.expect(types.includes(imageType)).to.eql(true);\r",
+											"    })\r",
+											"    pm.expect(response.length > 0).to.be.true;\r",
+											"}); "
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}?breed_ids=beng&mime_types=jpg,png&limit=3&page=0",
+									"host": [
+										"{{URL}}"
+									],
+									"query": [
+										{
+											"key": "breed_ids",
+											"value": "beng"
+										},
+										{
+											"key": "mime_types",
+											"value": "jpg,png"
+										},
+										{
+											"key": "limit",
+											"value": "3"
+										},
+										{
+											"key": "page",
+											"value": "0"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Check mime_types=gif",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const types = [\"gif\"];\r",
+											"let response = pm.response.json();\r",
+											"\r",
+											"pm.test(\"API response includes images that match to requested type\", function () {\r",
+											"    response.forEach(function(el) {\r",
+											"        let url = el.url;\r",
+											"        let imageType = url.slice(-3);\r",
+											"        pm.expect(types.includes(imageType)).to.eql(true);\r",
+											"    })\r",
+											"    pm.expect(response.length > 0).to.be.true;\r",
+											"}); "
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}?category_ids=1&mime_types=gif&limit=2&page=1",
+									"host": [
+										"{{URL}}"
+									],
+									"query": [
+										{
+											"key": "category_ids",
+											"value": "1"
+										},
+										{
+											"key": "mime_types",
+											"value": "gif"
+										},
+										{
+											"key": "limit",
+											"value": "2"
+										},
+										{
+											"key": "page",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Check empty mime_types",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const types = [\"jpg\", \"png\", \"gif\"];\r",
+											"let response = pm.response.json();\r",
+											"\r",
+											"pm.test(\"API response includes images that match to requested type\", function () {\r",
+											"    response.forEach(function(el) {\r",
+											"        let url = el.url;\r",
+											"        let imageType = url.slice(-3);\r",
+											"        pm.expect(types.includes(imageType)).to.eql(true);\r",
+											"    })\r",
+											"    pm.expect(response.length > 0).to.be.true;\r",
+											"}); "
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}?category_ids=15&mime_types=&limit=8&page=1",
+									"host": [
+										"{{URL}}"
+									],
+									"query": [
+										{
+											"key": "category_ids",
+											"value": "15"
+										},
+										{
+											"key": "mime_types",
+											"value": ""
+										},
+										{
+											"key": "limit",
+											"value": "8"
+										},
+										{
+											"key": "page",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Check mime_types=jpg",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const types = [\"jpg\"];\r",
+											"let response = pm.response.json();\r",
+											"\r",
+											"pm.test(\"API response includes images that match to requested type\", function () {\r",
+											"    response.forEach(function(el) {\r",
+											"        let url = el.url;\r",
+											"        let imageType = url.slice(-3);\r",
+											"        pm.expect(types.includes(imageType)).to.eql(true);\r",
+											"    })\r",
+											"    pm.expect(response.length > 0).to.be.true;\r",
+											"}); "
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}?category_ids=15&mime_types=jpg&limit=2&page=1",
+									"host": [
+										"{{URL}}"
+									],
+									"query": [
+										{
+											"key": "category_ids",
+											"value": "15"
+										},
+										{
+											"key": "mime_types",
+											"value": "jpg"
+										},
+										{
+											"key": "limit",
+											"value": "2"
+										},
+										{
+											"key": "page",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Check mime_types=png",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const types = [\"png\"];\r",
+											"let response = pm.response.json();\r",
+											"\r",
+											"pm.test(\"API response includes images that match to requested type\", function () {\r",
+											"    response.forEach(function(el) {\r",
+											"        let url = el.url;\r",
+											"        let imageType = url.slice(-3);\r",
+											"        pm.expect(types.includes(imageType)).to.eql(true);\r",
+											"    })\r",
+											"    pm.expect(response.length > 0).to.be.true;\r",
+											"}); "
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}?category_ids=15&mime_types=png&limit=2&page=0",
+									"host": [
+										"{{URL}}"
+									],
+									"query": [
+										{
+											"key": "category_ids",
+											"value": "15"
+										},
+										{
+											"key": "mime_types",
+											"value": "png"
+										},
+										{
+											"key": "limit",
+											"value": "2"
+										},
+										{
+											"key": "page",
+											"value": "0"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"let response = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Body is not empty\", function () {",
+									"    pm.expect(response !== null).to.eql(true);",
+									"    pm.expect(response.length > 0).to.eql(true);",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Check order in body",
+					"item": [
+						{
+							"name": "Check order=Desc",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"function checkDesc(arr)  {\r",
+											"    console.log('checkDesc');\r",
+											"    return arr.every(function (x, i) {\r",
+											"        return i === 0 || x <= arr[i - 1];\r",
+											"    });\r",
+											"}\r",
+											"let response = pm.response.json();\r",
+											"let orderList = [];\r",
+											"response.forEach((el) => {\r",
+											"    orderList.push(el.id);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"API response includes images that match to requested order\", function () {\r",
+											"    pm.expect(checkDesc(orderList)).to.eql(true);\r",
+											"    pm.expect(response.length > 0).to.be.true;\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is not empty\", function () {\r",
+											"    pm.expect(response !== null).to.eql(true);\r",
+											"    pm.expect(response.length > 0).to.eql(true);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}?breed_ids=beng&order=Desc&limit=3&page=0",
+									"host": [
+										"{{URL}}"
+									],
+									"query": [
+										{
+											"key": "breed_ids",
+											"value": "beng"
+										},
+										{
+											"key": "order",
+											"value": "Desc"
+										},
+										{
+											"key": "limit",
+											"value": "3"
+										},
+										{
+											"key": "page",
+											"value": "0"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Check order=Asc",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"function checkAsc(arr)  {\r",
+											"    console.log('checkAsc');\r",
+											"    return arr.every(function (x, i) {\r",
+											"        return i === 0 || x >= arr[i - 1];\r",
+											"    });\r",
+											"}\r",
+											"let response = pm.response.json();\r",
+											"let orderList = [];\r",
+											"response.forEach((el) => {\r",
+											"    orderList.push(el.id);\r",
+											"})\r",
+											"pm.test(\"API response includes images that match to requested order\", function () {\r",
+											"    pm.expect(checkAsc(orderList)).to.eql(true);\r",
+											"    pm.expect(response.length > 0).to.be.true;\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is not empty\", function () {\r",
+											"    pm.expect(response !== null).to.eql(true);\r",
+											"    pm.expect(response.length > 0).to.eql(true);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}?breed_ids=beng&order=Asc&limit=4&page=0",
+									"host": [
+										"{{URL}}"
+									],
+									"query": [
+										{
+											"key": "breed_ids",
+											"value": "beng"
+										},
+										{
+											"key": "order",
+											"value": "Asc"
+										},
+										{
+											"key": "limit",
+											"value": "4"
+										},
+										{
+											"key": "page",
+											"value": "0"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Check default (ascending) order",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"function checkAsc(arr)  {\r",
+											"    console.log('checkAsc');\r",
+											"    return arr.every(function (x, i) {\r",
+											"        return i === 0 || x >= arr[i - 1];\r",
+											"    });\r",
+											"}\r",
+											"let response = pm.response.json();\r",
+											"let orderList = [];\r",
+											"response.forEach((el) => {\r",
+											"    orderList.push(el.id);\r",
+											"})\r",
+											"pm.test(\"API response includes images that match to requested order\", function () {\r",
+											"    pm.expect(checkAsc(orderList)).to.eql(true);\r",
+											"    pm.expect(response.length > 0).to.be.true;\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is not empty\", function () {\r",
+											"    pm.expect(response !== null).to.eql(true);\r",
+											"    pm.expect(response.length > 0).to.eql(true);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}?breed_ids=beng&limit=4&page=0",
+									"host": [
+										"{{URL}}"
+									],
+									"query": [
+										{
+											"key": "breed_ids",
+											"value": "beng"
+										},
+										{
+											"key": "limit",
+											"value": "4"
+										},
+										{
+											"key": "page",
+											"value": "0"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Check order=Rand",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"function checkAsc(arr)  {\r",
+											"    console.log('checkAsc');\r",
+											"    return arr.every(function (x, i) {\r",
+											"        return i === 0 || x >= arr[i - 1];\r",
+											"    });\r",
+											"}\r",
+											"function checkDesc(arr)  {\r",
+											"    console.log('checkDesc');\r",
+											"    return arr.every(function (x, i) {\r",
+											"        return i === 0 || x <= arr[i - 1];\r",
+											"    });\r",
+											"}\r",
+											"let response = pm.response.json();\r",
+											"let orderList = [];\r",
+											"response.forEach((el) => {\r",
+											"    orderList.push(el.id);\r",
+											"})\r",
+											"pm.test(\"API response includes images that match to requested order\", function () {\r",
+											"    pm.expect(checkDesc(orderList)).to.eql(true) || pm.expect(checkAsc(orderList)).to.eql(true);\r",
+											"    pm.expect(response.length > 0).to.be.true;\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is not empty\", function () {\r",
+											"    pm.expect(response !== null).to.eql(true);\r",
+											"    pm.expect(response.length > 0).to.eql(true);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}?breed_ids=beng&order=Rand&limit=4&page=2",
+									"host": [
+										"{{URL}}"
+									],
+									"query": [
+										{
+											"key": "breed_ids",
+											"value": "beng"
+										},
+										{
+											"key": "order",
+											"value": "Rand"
+										},
+										{
+											"key": "limit",
+											"value": "4"
+										},
+										{
+											"key": "page",
+											"value": "2"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Limit and page",
+					"item": [
+						{
+							"name": "Check limit=3 and page=0",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}?breed_ids=beng&limit=3&page=0",
+									"host": [
+										"{{URL}}"
+									],
+									"query": [
+										{
+											"key": "breed_ids",
+											"value": "beng"
+										},
+										{
+											"key": "limit",
+											"value": "3"
+										},
+										{
+											"key": "page",
+											"value": "0"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Check limit=1 and page=1",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}?category_ids=15&limit=1&page=1",
+									"host": [
+										"{{URL}}"
+									],
+									"query": [
+										{
+											"key": "category_ids",
+											"value": "15"
+										},
+										{
+											"key": "limit",
+											"value": "1"
+										},
+										{
+											"key": "page",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"let paramsObj = {",
+									"   ",
+									"    checkLimit: function() {",
+									"        pm.test(\"API response includes images that match to requested limit of the records per page\", function () {",
+									"            //check that limit param equals response pagination-limit header",
+									"            let limitHeader = pm.response.headers.get(\"pagination-limit\");",
+									"            pm.expect(paramsObj.limit).to.eql(limitHeader);",
+									"",
+									"            //check that limit param equals the number of  response records",
+									"            pm.expect(Number(paramsObj.limit)).to.eql(response.length);",
+									"        });",
+									"    },",
+									"",
+									"    checkPage: function() {",
+									"        pm.test(\"API response provide requested page\", function () {",
+									"            //check that page param equals response pagination-page header",
+									"            let pageHeader = pm.response.headers.get(\"pagination-page\");",
+									"            pm.expect(paramsObj.page).to.eql(pageHeader);",
+									"        });",
+									"    }",
+									"}",
+									"",
+									"let paramsList = pm.request.url.query;",
+									"let response = pm.response.json();",
+									"",
+									"paramsList.reduce(function(target, key) {",
+									"        target[key.key] = key.value;",
+									"        return target;",
+									"}, paramsObj) //initial empty object",
+									"",
+									"paramsObj.limit && paramsObj.checkLimit();",
+									"paramsObj.page && paramsObj.checkPage();",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Body is not empty\", function () {",
+									"    pm.expect(response !== null).to.eql(true);",
+									"    pm.expect(response.length > 0).to.eql(true);",
+									"});"
+								]
+							}
+						}
+					]
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Negative testing",
+			"item": [
+				{
+					"name": "Check 404 status",
+					"item": [
+						{
+							"name": "check breed_ids=sddd",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let response = pm.response.json();\r",
+											"pm.test(\"Body is empty\", function () {\r",
+											"    pm.expect(response.length < 1).to.eql(true);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}?limit=3&page=0&breed_ids=sddd",
+									"host": [
+										"{{URL}}"
+									],
+									"query": [
+										{
+											"key": "limit",
+											"value": "3"
+										},
+										{
+											"key": "page",
+											"value": "0"
+										},
+										{
+											"key": "breed_ids",
+											"value": "sddd"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "check breed_ids=",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}?limit=3&page=0&breed_ids=",
+									"host": [
+										"{{URL}}"
+									],
+									"query": [
+										{
+											"key": "limit",
+											"value": "3"
+										},
+										{
+											"key": "page",
+											"value": "0"
+										},
+										{
+											"key": "breed_ids",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "check category_ids=4f",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let response = pm.response.json();\r",
+											"pm.test(\"Body is empty\", function () {\r",
+											"    pm.expect(response.length < 1).to.eql(true);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}?limit=3&page=0&category_ids=4f",
+									"host": [
+										"{{URL}}"
+									],
+									"query": [
+										{
+											"key": "limit",
+											"value": "3"
+										},
+										{
+											"key": "page",
+											"value": "0"
+										},
+										{
+											"key": "category_ids",
+											"value": "4f"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "check category_ids=",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}?limit=3&page=0&category_ids=",
+									"host": [
+										"{{URL}}"
+									],
+									"query": [
+										{
+											"key": "limit",
+											"value": "3"
+										},
+										{
+											"key": "page",
+											"value": "0"
+										},
+										{
+											"key": "category_ids",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "check mime_types=sdf",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}?limit=3&page=0&mime_types=sdf",
+									"host": [
+										"{{URL}}"
+									],
+									"query": [
+										{
+											"key": "limit",
+											"value": "3"
+										},
+										{
+											"key": "page",
+											"value": "0"
+										},
+										{
+											"key": "mime_types",
+											"value": "sdf"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Limit and page",
+					"item": [
+						{
+							"name": "Check 400 code when order=Rand",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"//Pagination can only be performed when the order query parameter is Desc or Asc - Not the default Rand\r",
+											"\r",
+											"pm.test(\"Status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}?breed_ids=beng&limit=3&page=0&order=Rand",
+									"host": [
+										"{{URL}}"
+									],
+									"query": [
+										{
+											"key": "breed_ids",
+											"value": "beng"
+										},
+										{
+											"key": "limit",
+											"value": "3"
+										},
+										{
+											"key": "page",
+											"value": "0"
+										},
+										{
+											"key": "order",
+											"value": "Rand"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Check limit=-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let response = pm.response.json();\r",
+											"pm.test(\"limit < 0 must provide 1 record\", function () {\r",
+											"    pm.expect(response.length === 1).to.eql(true);\r",
+											"});\r",
+											"pm.test(\"limit < 0 must provide pagination-limit = 1\", function () {\r",
+											"    pm.expect(Number(pm.response.headers.get(\"pagination-limit\"))).to.eql(1);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}?limit=-1&page=0",
+									"host": [
+										"{{URL}}"
+									],
+									"query": [
+										{
+											"key": "breed_ids",
+											"value": "beng",
+											"disabled": true
+										},
+										{
+											"key": "limit",
+											"value": "-1"
+										},
+										{
+											"key": "page",
+											"value": "0"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Check page=-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let response = pm.response.json();\r",
+											"pm.test(\"page < 0 must provide non-empty response\", function () {\r",
+											"    pm.expect(response.length > 0).to.eql(true);\r",
+											"});\r",
+											"pm.test(\"page < 0 must provide response header pagination-page = 0\", function () {\r",
+											"    pm.expect(Number(pm.response.headers.get(\"pagination-page\"))).to.eql(0);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}?breed_ids=beng&page=-1&limit=5",
+									"host": [
+										"{{URL}}"
+									],
+									"query": [
+										{
+											"key": "breed_ids",
+											"value": "beng"
+										},
+										{
+											"key": "page",
+											"value": "-1"
+										},
+										{
+											"key": "limit",
+											"value": "5"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Positive",
+					"item": [
+						{
+							"name": "Search by Category with valid token",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}?category_ids=1",
+									"host": [
+										"{{URL}}"
+									],
+									"query": [
+										{
+											"key": "category_ids",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search by Breed with valid token",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}?breed_ids=beng",
+									"host": [
+										"{{URL}}"
+									],
+									"query": [
+										{
+											"key": "breed_ids",
+											"value": "beng"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Negative",
+					"item": [
+						{
+							"name": "Search by Breed with invalid token",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "value",
+											"value": "{{INVALID_KEY}}",
+											"type": "string"
+										},
+										{
+											"key": "key",
+											"value": "x-api-key",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}?breed_ids=beng",
+									"host": [
+										"{{URL}}"
+									],
+									"query": [
+										{
+											"key": "breed_ids",
+											"value": "beng"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search by Category with invalid token",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "value",
+											"value": "{{INVALID_KEY}}",
+											"type": "string"
+										},
+										{
+											"key": "key",
+											"value": "x-api-key",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}?category_ids=1",
+									"host": [
+										"{{URL}}"
+									],
+									"query": [
+										{
+											"key": "category_ids",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search by Breed without token",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}?breed_ids=beng",
+									"host": [
+										"{{URL}}"
+									],
+									"query": [
+										{
+											"key": "breed_ids",
+											"value": "beng"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search by Category without token",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}?category_ids=1",
+									"host": [
+										"{{URL}}"
+									],
+									"query": [
+										{
+											"key": "category_ids",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});"
+								]
+							}
+						}
+					]
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "apikey",
+		"apikey": [
+			{
+				"key": "value",
+				"value": "{{KEY}}",
+				"type": "string"
+			},
+			{
+				"key": "key",
+				"value": "x-api-key",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "categoriesList",
+			"value": ""
+		},
+		{
+			"key": "breedsList",
+			"value": ""
+		}
+	]
+}
