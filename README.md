@@ -46,7 +46,8 @@ Interface should be developed in the following manner:
 Using all of them we should get Cat images from https://api.thecatapi.com/images/search.
 Every API request should be authorized using x-api-key parameter in header request.
 
-TASK: prepare test cases for testing UI.
+TASK: prepare test cases for testing UI
+-----------------------------------
 
 Mockup:
 
