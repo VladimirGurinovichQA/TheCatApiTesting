@@ -46,6 +46,9 @@ Interface should be developed in the following manner:
 Using all of them we should get Cat images from https://api.thecatapi.com/images/search.
 Every API request should be authorized using x-api-key parameter in header request.
 
-Mockup:
-![image](https://user-images.githubusercontent.com/107668807/174448306-8d2e023c-a87b-4b36-a9b7-4bd656e65da8.png)
 TASK: prepare test cases for testing UI.
+
+Mockup:
+
+![image](https://user-images.githubusercontent.com/107668807/174448306-8d2e023c-a87b-4b36-a9b7-4bd656e65da8.png)
+
